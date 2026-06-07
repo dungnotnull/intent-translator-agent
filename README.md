@@ -1,9 +1,6 @@
-# 🤖 intent-translator-agent
-
 <div align="center">
-
-**"Trợ lý chuyển đổi ý chí tự nhiên thành quy trình nghiệp vụ"**
-
+<h1>🤖 intent-translator-agent</h1>
+       
 *The invisible bridge between a non-technical user's natural words and the institutional systems that serve them.*
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.5-blue?logo=typescript)](https://www.typescriptlang.org/)
