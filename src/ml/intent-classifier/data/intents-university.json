@@ -1,0 +1,125 @@
+{
+  "domain": "university",
+  "version": "0.1.0",
+  "intents": [
+    {
+      "id": "QUERY_TUITION_SEMESTER",
+      "examples": [
+        "học phí kỳ này bao nhiêu",
+        "tôi cần biết tiền học kỳ 1 là bao nhiêu",
+        "cho hỏi học phí HK2 tổng cộng là bao tiền",
+        "tuition this semester how much",
+        "học phí ngành CNTT năm 3 là bao nhiêu",
+        "kỳ này đóng bao nhiêu tiền học phí vậy",
+        "mình chưa biết học phí kỳ này, giúp tôi với",
+        "học phí của tôi học kỳ này là bao nhiêu"
+      ]
+    },
+    {
+      "id": "QUERY_TUITION_DEADLINE",
+      "examples": [
+        "khi nào phải đóng học phí",
+        "hạn nộp học phí kỳ này là ngày mấy",
+        "deadline đóng tiền học là bao giờ",
+        "học phí đóng đến khi nào",
+        "hạn cuối nộp học phí"
+      ]
+    },
+    {
+      "id": "QUERY_TUITION_DISCOUNT",
+      "examples": [
+        "tôi có được giảm học phí không",
+        "điều kiện xét học bổng là gì",
+        "tôi thuộc diện chính sách, được giảm bao nhiêu",
+        "scholarship conditions",
+        "miễn giảm học phí cho sinh viên nghèo"
+      ]
+    },
+    {
+      "id": "REGISTER_COURSE_NEW",
+      "examples": [
+        "tôi muốn đăng ký môn lập trình web",
+        "đăng ký học CS301 được không",
+        "cho tôi đăng ký thêm môn kỳ này",
+        "register for web programming course",
+        "tôi cần đăng ký môn học"
+      ]
+    },
+    {
+      "id": "CANCEL_COURSE_REGISTRATION",
+      "examples": [
+        "tôi muốn hủy đăng ký môn toán",
+        "drop môn MATH201",
+        "rút môn học kỳ này",
+        "hủy môn tôi đã đăng ký"
+      ]
+    },
+    {
+      "id": "QUERY_COURSE_SCHEDULE",
+      "examples": [
+        "lịch học tuần sau của tôi",
+        "môn lập trình học vào thứ mấy",
+        "thời khóa biểu kỳ này",
+        "my schedule next week",
+        "lịch học của tôi"
+      ]
+    },
+    {
+      "id": "QUERY_GRADUATION_REQUIREMENTS",
+      "examples": [
+        "tôi cần hoàn thành bao nhiêu tín chỉ để tốt nghiệp",
+        "điều kiện xét tốt nghiệp ngành CNTT",
+        "tôi còn thiếu môn nào để ra trường",
+        "graduation requirements",
+        "cần bao nhiêu tín chỉ để tốt nghiệp"
+      ]
+    },
+    {
+      "id": "QUERY_ACADEMIC_TRANSCRIPT",
+      "examples": [
+        "bảng điểm của tôi",
+        "điểm các môn tôi học kỳ trước",
+        "my transcript",
+        "GPA của tôi là bao nhiêu",
+        "cho xem bảng điểm"
+      ]
+    },
+    {
+      "id": "QUERY_ACADEMIC_POLICY",
+      "examples": [
+        "quy định về điểm thi lại là gì",
+        "sinh viên bị đình chỉ khi nào",
+        "academic probation rules",
+        "thi lại được mấy lần",
+        "quy chế học vụ"
+      ]
+    },
+    {
+      "id": "REQUEST_DOCUMENT_ENROLLMENT",
+      "examples": [
+        "tôi cần giấy xác nhận đang học",
+        "xin giấy sinh viên để vay vốn ngân hàng",
+        "enrollment certificate request",
+        "cần giấy xác nhận sinh viên"
+      ]
+    },
+    {
+      "id": "QUERY_DOCUMENT_STATUS",
+      "examples": [
+        "giấy tờ tôi nộp đã xử lý chưa",
+        "tình trạng đơn xin phép nghỉ học",
+        "status of my application",
+        "đơn của tôi đã được duyệt chưa"
+      ]
+    },
+    {
+      "id": "QUERY_GENERAL_INFO",
+      "examples": [
+        "văn phòng khoa mở cửa mấy giờ",
+        "phòng thi ở đâu",
+        "lịch nghỉ tết năm nay",
+        "thư viện mở cửa lúc mấy giờ"
+      ]
+    }
+  ]
+}

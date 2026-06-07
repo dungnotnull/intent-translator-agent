@@ -1,0 +1,102 @@
+slots:
+  student_id:
+    type: string
+    pattern: "^\\d{8,10}$"
+    prompt_vi: "mã số sinh viên"
+    prompt_en: "student ID"
+    example: "20210001"
+    privacy: true
+
+  semester:
+    type: enum
+    values: ["HK1", "HK2", "HK3"]
+    aliases:
+      "kỳ 1": "HK1"
+      "kỳ 2": "HK2"
+      "kỳ 3": "HK3"
+      "học kỳ 1": "HK1"
+      "học kỳ 2": "HK2"
+      "HK1": "HK1"
+      "HK2": "HK2"
+      "semester 1": "HK1"
+      "semester 2": "HK2"
+    prompt_vi: "học kỳ"
+    default: "current_semester"
+
+  academic_year:
+    type: string
+    pattern: "^\\d{4}-\\d{4}$"
+    prompt_vi: "năm học"
+    example: "2024-2025"
+    default: "current_academic_year"
+
+  course_code:
+    type: string
+    pattern: "^[A-Z]{2,6}\\d{3,4}$"
+    prompt_vi: "mã môn học"
+    example: "CS301"
+    validate_against: "course_catalog"
+
+  purpose:
+    type: free_text
+    max_length: 200
+    prompt_vi: "mục đích sử dụng giấy tờ"
+    examples:
+      - "vay vốn ngân hàng"
+      - "xin việc làm"
+      - "học bổng"
+      - "xuất cảnh"
+
+  major:
+    type: enum
+    values:
+      - "CNTT"
+      - "KHMT"
+      - "HTTT"
+      - "KTMT"
+      - "KTPM"
+      - "TTNT"
+      - "ATTT"
+    prompt_vi: "ngành học"
+    prompt_en: "major"
+
+  scholarship_type:
+    type: enum
+    values: ["policy", "merit", "need_based", "sport", "art"]
+    prompt_vi: "loại học bổng"
+    prompt_en: "scholarship type"
+
+  policy_topic:
+    type: free_text
+    max_length: 100
+    prompt_vi: "chủ đề quy chế cần tra cứu"
+
+  week:
+    type: string
+    prompt_vi: "tuần"
+    prompt_en: "week"
+    example: "2024-W15"
+
+  class_section:
+    type: string
+    prompt_vi: "lớp học phần"
+    prompt_en: "class section"
+    example: "L01"
+
+  document_type:
+    type: enum
+    values: ["enrollment_cert", "transcript", "graduation_cert", "leave_letter", "other"]
+    prompt_vi: "loại giấy tờ"
+
+  submission_date:
+    type: date
+    prompt_vi: "ngày nộp hồ sơ"
+
+  copies_count:
+    type: number
+    prompt_vi: "số bản sao"
+    example: "1"
+
+  pickup_date:
+    type: date
+    prompt_vi: "ngày nhận giấy"

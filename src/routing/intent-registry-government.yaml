@@ -1,0 +1,141 @@
+domain: government
+version: "0.1.0"
+
+intents:
+  # ─── DOCUMENT & PROCEDURE LOOKUP ────────────────────────────
+  - id: QUERY_PROCEDURE_INFO
+    name: "Tra cứu thông tin thủ tục hành chính"
+    examples:
+      - "thủ tục làm căn cước công dân như thế nào"
+      - "cần những giấy tờ gì để đăng ký kết hôn"
+      - "làm hộ chiếu mất bao lâu"
+      - "thủ tục đổi bằng lái xe"
+      - "đăng ký khai sinh cho con ở đâu"
+    required_slots: [procedure_name]
+    optional_slots: [citizen_id]
+    route: government_portal.search_procedure
+    confirmation_required: false
+
+  - id: QUERY_DOCUMENT_REQUIREMENTS
+    name: "Hỏi hồ sơ cần chuẩn bị"
+    examples:
+      - "cần giấy tờ gì để làm thủ tục"
+      - "hồ sơ xin cấp giấy phép xây dựng gồm những gì"
+      - "chuẩn bị gì khi đi đăng ký kết hôn"
+    required_slots: [procedure_name]
+    optional_slots: []
+    route: government_portal.get_requirements
+    confirmation_required: false
+
+  - id: QUERY_PROCEDURE_FEE
+    name: "Hỏi lệ phí thủ tục"
+    examples:
+      - "lệ phí làm hộ chiếu là bao nhiêu"
+      - "phí cấp đổi căn cước công dân"
+      - "làm giấy khai sinh có mất phí không"
+    required_slots: [procedure_name]
+    optional_slots: []
+    route: government_portal.get_fee
+    confirmation_required: false
+
+  - id: QUERY_PROCEDURE_OFFICE
+    name: "Hỏi địa điểm/cơ quan giải quyết"
+    examples:
+      - "làm thủ tục này ở đâu"
+      - "cơ quan nào giải quyết thủ tục đăng ký đất đai"
+      - "ủy ban nhân dân phường nào"
+    required_slots: [procedure_name]
+    optional_slots: [district, ward]
+    route: government_portal.get_office
+
+  - id: QUERY_PROCEDURE_TIMELINE
+    name: "Hỏi thời gian giải quyết"
+    examples:
+      - "bao lâu thì có kết quả"
+      - "thời gian xử lý thủ tục này là mấy ngày"
+      - "khi nào nhận được giấy tờ"
+    required_slots: [procedure_name]
+    optional_slots: []
+    route: government_portal.get_timeline
+
+  # ─── APPOINTMENT SCHEDULING ──────────────────────────────────
+  - id: SCHEDULE_APPOINTMENT
+    name: "Đặt lịch hẹn làm việc"
+    examples:
+      - "tôi muốn đặt lịch hẹn làm thủ tục"
+      - "đặt lịch làm căn cước"
+      - "hẹn giờ lên ủy ban"
+    required_slots: [citizen_id, procedure_name]
+    optional_slots: [preferred_date, office_code]
+    route: government_portal.schedule_appointment
+    confirmation_required: true
+
+  - id: QUERY_APPOINTMENT_STATUS
+    name: "Kiểm tra lịch hẹn"
+    examples:
+      - "lịch hẹn của tôi như thế nào"
+      - "xem lại lịch hẹn đã đặt"
+      - "ngày mai tôi có lịch hẹn không"
+    required_slots: [citizen_id]
+    optional_slots: [appointment_id]
+    route: government_portal.get_appointment
+
+  - id: CANCEL_APPOINTMENT
+    name: "Hủy lịch hẹn"
+    examples:
+      - "tôi muốn hủy lịch hẹn"
+      - "đổi ngày hẹn được không"
+      - "không đi hẹn được thì làm sao"
+    required_slots: [appointment_id]
+    optional_slots: []
+    route: government_portal.cancel_appointment
+    confirmation_required: true
+
+  # ─── APPLICATION STATUS ──────────────────────────────────────
+  - id: QUERY_APPLICATION_STATUS
+    name: "Kiểm tra trạng thái hồ sơ"
+    examples:
+      - "hồ sơ của tôi đã xử lý chưa"
+      - "kiểm tra tiến độ đơn xin cấp phép"
+      - "tình trạng hồ sơ đăng ký kinh doanh"
+    required_slots: [citizen_id, application_id]
+    optional_slots: []
+    route: government_portal.check_status
+
+  # ─── CITIZEN INFO ────────────────────────────────────────────
+  - id: QUERY_ONLINE_SERVICE
+    name: "Hỏi về dịch vụ công trực tuyến"
+    examples:
+      - "thủ tục này có làm online được không"
+      - "nộp hồ sơ qua mạng ở đâu"
+      - "dịch vụ công mức độ 4 là gì"
+    required_slots: []
+    optional_slots: [procedure_name]
+    route: government_portal.online_service_info
+
+  # ─── OFFICE INFO ─────────────────────────────────────────────
+  - id: QUERY_OFFICE_INFO
+    name: "Hỏi thông tin cơ quan hành chính"
+    examples:
+      - "ủy ban phường mở cửa lúc mấy giờ"
+      - "số điện thoại bộ phận một cửa"
+      - "địa chỉ ủy ban nhân dân quận"
+    required_slots: []
+    optional_slots: [office_code, district]
+    route: government_portal.get_office_info
+
+  # ─── CATCH-ALL ───────────────────────────────────────────────
+  - id: QUERY_GENERAL_GOV_INFO
+    name: "Hỏi thông tin chung về hành chính"
+    examples:
+      - "bộ phận một cửa là gì"
+      - "dịch vụ công quốc gia"
+      - "cần tư vấn thủ tục hành chính"
+    required_slots: []
+    route: knowledge_base.general_search
+
+  - id: CLARIFY_NEEDED
+    name: "Cần làm rõ ý định"
+    examples: []
+    required_slots: []
+    route: dialogue_manager.ask_clarification

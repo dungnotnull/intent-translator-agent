@@ -1,0 +1,151 @@
+domain: university
+version: "0.1.0"
+
+intents:
+  # ─── TUITION & FINANCE ───────────────────────────────────────
+  - id: QUERY_TUITION_SEMESTER
+    name: "Tra cứu học phí theo học kỳ"
+    examples:
+      - "học phí kỳ này bao nhiêu"
+      - "tôi cần biết tiền học kỳ 1 là bao nhiêu"
+      - "cho hỏi học phí HK2 tổng cộng là bao tiền"
+      - "tuition this semester how much"
+      - "học phí ngành CNTT năm 3 là bao nhiêu"
+      - "kỳ này đóng bao nhiêu tiền học phí vậy"
+      - "mình chưa biết học phí kỳ này, giúp tôi với"
+    required_slots: [student_id, semester]
+    optional_slots: [academic_year]
+    route: university_sis.get_tuition
+    confirmation_required: false
+
+  - id: QUERY_TUITION_DEADLINE
+    name: "Hỏi hạn nộp học phí"
+    examples:
+      - "khi nào phải đóng học phí"
+      - "hạn nộp học phí kỳ này là ngày mấy"
+      - "deadline đóng tiền học là bao giờ"
+    required_slots: [semester]
+    optional_slots: [student_id]
+    route: university_sis.get_tuition_deadline
+    confirmation_required: false
+
+  - id: QUERY_TUITION_DISCOUNT
+    name: "Hỏi về học bổng/miễn giảm học phí"
+    examples:
+      - "tôi có được giảm học phí không"
+      - "điều kiện xét học bổng là gì"
+      - "tôi thuộc diện chính sách, được giảm bao nhiêu"
+      - "scholarship conditions"
+    required_slots: [student_id]
+    optional_slots: [scholarship_type]
+    route: university_sis.get_scholarship_info
+    confirmation_required: false
+
+  # ─── COURSE REGISTRATION ─────────────────────────────────────
+  - id: REGISTER_COURSE_NEW
+    name: "Đăng ký môn học"
+    examples:
+      - "tôi muốn đăng ký môn lập trình web"
+      - "đăng ký học CS301 được không"
+      - "cho tôi đăng ký thêm môn kỳ này"
+      - "register for web programming course"
+    required_slots: [student_id, course_code, semester]
+    optional_slots: [class_section]
+    route: university_sis.register_course
+    confirmation_required: true
+    confirmation_message: "Bạn muốn đăng ký môn {course_name} ({course_code}), học kỳ {semester}?"
+
+  - id: CANCEL_COURSE_REGISTRATION
+    name: "Hủy đăng ký môn học"
+    examples:
+      - "tôi muốn hủy đăng ký môn toán"
+      - "drop môn MATH201"
+      - "rút môn học kỳ này"
+    required_slots: [student_id, course_code, semester]
+    route: university_sis.cancel_course
+    confirmation_required: true
+
+  - id: QUERY_COURSE_SCHEDULE
+    name: "Tra cứu lịch học"
+    examples:
+      - "lịch học tuần sau của tôi như thế nào"
+      - "môn lập trình học vào thứ mấy"
+      - "thời khóa biểu kỳ này của tôi"
+      - "my schedule next week"
+    required_slots: [student_id]
+    optional_slots: [week, course_code]
+    route: university_sis.get_schedule
+
+  # ─── ACADEMIC INFORMATION ────────────────────────────────────
+  - id: QUERY_GRADUATION_REQUIREMENTS
+    name: "Hỏi điều kiện tốt nghiệp"
+    examples:
+      - "tôi cần hoàn thành bao nhiêu tín chỉ để tốt nghiệp"
+      - "điều kiện xét tốt nghiệp ngành CNTT là gì"
+      - "graduation requirements for my major"
+      - "tôi còn thiếu môn nào để ra trường"
+    required_slots: [student_id]
+    optional_slots: [major]
+    route: university_sis.get_graduation_requirements
+
+  - id: QUERY_ACADEMIC_TRANSCRIPT
+    name: "Xem bảng điểm"
+    examples:
+      - "bảng điểm của tôi"
+      - "điểm các môn tôi học kỳ trước"
+      - "my transcript"
+      - "GPA của tôi là bao nhiêu"
+    required_slots: [student_id]
+    optional_slots: [semester, academic_year]
+    route: university_sis.get_transcript
+
+  - id: QUERY_ACADEMIC_POLICY
+    name: "Hỏi quy chế học vụ"
+    examples:
+      - "quy định về điểm thi lại là gì"
+      - "sinh viên bị đình chỉ khi nào"
+      - "academic probation rules"
+      - "quy chế học vụ về nghỉ học"
+      - "thi lại được mấy lần"
+    required_slots: []
+    optional_slots: [policy_topic]
+    route: knowledge_base.query_policy
+
+  # ─── DOCUMENTS & PROCEDURES ──────────────────────────────────
+  - id: REQUEST_DOCUMENT_ENROLLMENT
+    name: "Xin giấy xác nhận sinh viên"
+    examples:
+      - "tôi cần giấy xác nhận đang học"
+      - "xin giấy sinh viên để vay vốn ngân hàng"
+      - "enrollment certificate request"
+    required_slots: [student_id, purpose]
+    optional_slots: [copies_count, pickup_date]
+    route: university_sis.request_document
+    confirmation_required: true
+
+  - id: QUERY_DOCUMENT_STATUS
+    name: "Kiểm tra trạng thái hồ sơ/giấy tờ"
+    examples:
+      - "giấy tờ tôi nộp hôm qua đã xử lý chưa"
+      - "tình trạng đơn xin phép nghỉ học của tôi"
+      - "status of my leave application"
+    required_slots: [student_id]
+    optional_slots: [document_type, submission_date]
+    route: university_sis.get_document_status
+
+  # ─── CATCH-ALL ───────────────────────────────────────────────
+  - id: QUERY_GENERAL_INFO
+    name: "Hỏi thông tin chung"
+    examples:
+      - "văn phòng khoa mở cửa mấy giờ"
+      - "phòng thi ở đâu"
+      - "lịch nghỉ tết năm nay"
+    required_slots: []
+    route: knowledge_base.general_search
+
+  - id: CLARIFY_NEEDED
+    name: "Cần làm rõ ý định"
+    description: "Used when confidence < 0.65 or utterance is completely ambiguous"
+    examples: []
+    required_slots: []
+    route: dialogue_manager.ask_clarification

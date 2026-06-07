@@ -1,0 +1,13 @@
+{
+  "name": "intent-translator-chat-widget",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "esbuild src/ui/chat-widget/widget.ts --bundle --minify --outfile=dist/widget.js --format=iife",
+    "dev": "esbuild src/ui/chat-widget/widget.ts --bundle --outfile=dist/widget.js --format=iife --watch"
+  },
+  "devDependencies": {
+    "esbuild": "^0.23.0"
+  }
+}

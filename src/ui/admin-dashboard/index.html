@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Intent Translator — Admin Dashboard</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,sans-serif;background:#f8fafc;color:#1e293b;display:flex;min-height:100vh}
+nav{width:240px;background:#1e293b;color:#fff;padding:20px 0;position:fixed;height:100vh;overflow-y:auto}
+nav h2{padding:0 20px 20px;font-size:18px;border-bottom:1px solid #334155}
+nav a{display:block;padding:12px 20px;color:#cbd5e1;text-decoration:none;font-size:14px;border-left:3px solid transparent}
+nav a:hover,nav a.active{background:#334155;color:#fff;border-left-color:#3b82f6}
+main{margin-left:240px;flex:1;padding:32px}
+h1{font-size:24px;margin-bottom:24px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;margin-bottom:32px}
+.card{background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.card h3{font-size:13px;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.card .value{font-size:28px;font-weight:700}
+.card .sub{font-size:12px;color:#94a3b8;margin-top:4px}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+th,td{padding:12px 16px;text-align:left;font-size:14px;border-bottom:1px solid #e2e8f0}
+th{background:#f1f5f9;font-weight:600;color:#475569}
+tr:hover{background:#f8fafc}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:12px}
+.badge-low{background:#fee2e2;color:#dc2626}
+.badge-med{background:#fef3c7;color:#d97706}
+.badge-high{background:#dcfce7;color:#16a34a}
+.badge-pending{background:#dbeafe;color:#2563eb}
+.btn{padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:500}
+.btn-primary{background:#2563eb;color:#fff}
+.btn-danger{background:#dc2626;color:#fff}
+.btn-outline{background:#fff;border:1px solid #e2e8f0;color:#475569}
+.btn-sm{padding:4px 12px;font-size:12px}
+.actions{display:flex;gap:8px}
+.mt-16{margin-top:16px}
+.mb-16{margin-bottom:16px}
+.section{margin-bottom:32px}
+pre{background:#1e293b;color:#e2e8f0;padding:16px;border-radius:8px;overflow-x:auto;font-size:13px}
+</style>
+</head>
+<body>
+<nav>
+  <h2>🤖 Intent Translator</h2>
+  <a href="#analytics" class="active" onclick="showTab('analytics')">📊 Analytics</a>
+  <a href="#intents" onclick="showTab('intents')">🏷️ Intent Registry</a>
+  <a href="#review" onclick="showTab('review')">🔍 Review Queue</a>
+  <a href="#training" onclick="showTab('training')">📝 Training Data</a>
+  <a href="#models" onclick="showTab('models')">🧠 Model Metrics</a>
+</nav>
+<main>
+  <div id="tab-analytics">
+    <h1>📊 Analytics</h1>
+    <div class="cards" id="stats-cards"></div>
+    <div class="section">
+      <h3>Top Intents (Last 100)</h3>
+      <table><thead><tr><th>Intent</th><th>Count</th><th>%</th></tr></thead><tbody id="top-intents"></tbody></table>
+    </div>
+  </div>
+  <div id="tab-intents" style="display:none">
+    <h1>🏷️ Intent Registry</h1>
+    <div class="actions mb-16">
+      <button class="btn btn-outline btn-sm" onclick="loadIntents()">🔄 Refresh</button>
+    </div>
+    <table><thead><tr><th>ID</th><th>Name</th><th>Required Slots</th><th>Examples</th><th>Confirm</th></tr></thead><tbody id="intent-list"></tbody></table>
+  </div>
+  <div id="tab-review" style="display:none">
+    <h1>🔍 Low-Confidence Review Queue</h1>
+    <div class="actions mb-16">
+      <button class="btn btn-outline btn-sm" onclick="loadReviewQueue()">🔄 Refresh</button>
+    </div>
+    <div id="review-list"></div>
+  </div>
+  <div id="tab-training" style="display:none">
+    <h1>📝 Training Data Management</h1>
+    <div class="cards" id="training-stats"></div>
+    <div class="actions mb-16">
+      <button class="btn btn-outline btn-sm" onclick="loadTrainingData()">🔄 Refresh</button>
+      <button class="btn btn-primary btn-sm" onclick="triggerRetraining()">⚡ Trigger Retraining</button>
+    </div>
+    <table><thead><tr><th>Text</th><th>Label</th><th>Domain</th><th>Status</th><th>Actions</th></tr></thead><tbody id="training-list"></tbody></table>
+  </div>
+  <div id="tab-models" style="display:none">
+    <h1>🧠 Model Metrics</h1>
+    <div class="cards" id="model-cards"></div>
+    <div class="section"><h3>Weekly Accuracy Trend</h3><table><thead><tr><th>Date</th><th>Accuracy</th><th>F1</th><th>Queries</th></tr></thead><tbody id="model-metrics"></tbody></table></div>
+  </div>
+</main>
+<script>
+const API = '/api/admin';
+let currentTab = 'analytics';
+
+function showTab(tab) {
+  document.querySelectorAll('[id^="tab-"]').forEach(el => el.style.display = 'none');
+  document.getElementById('tab-' + tab).style.display = 'block';
+  document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+  document.querySelector(`nav a[href="#${tab}"]`).classList.add('active');
+  currentTab = tab;
+  if (tab === 'analytics') loadAnalytics();
+  if (tab === 'intents') loadIntents();
+  if (tab === 'review') loadReviewQueue();
+  if (tab === 'training') loadTrainingData();
+  if (tab === 'models') loadModelMetrics();
+}
+
+async function loadAnalytics() {
+  try {
+    const res = await fetch(API + '/analytics');
+    const data = await res.json();
+    document.getElementById('stats-cards').innerHTML =
+      `<div class="card"><h3>Total Queries</h3><div class="value">${data.total}</div></div>` +
+      `<div class="card"><h3>Avg Confidence</h3><div class="value">${(data.avgConfidence * 100).toFixed(1)}%</div></div>` +
+      `<div class="card"><h3>Unresolved Rate</h3><div class="value">${(data.unresolvedRate * 100).toFixed(1)}%</div></div>`;
+    const intents = Object.entries(data.byIntent||{}).sort((a,b) => b[1] - a[1]);
+    document.getElementById('top-intents').innerHTML = intents.slice(0,15).map(([k,v]) =>
+      `<tr><td>${k}</td><td>${v}</td><td>${data.total ? (v/data.total*100).toFixed(1) : 0}%</td></tr>`
+    ).join('');
+  } catch(e) { console.error(e); }
+}
+
+async function loadIntents() {
+  try {
+    const res = await fetch(API + '/intents');
+    const data = await res.json();
+    document.getElementById('intent-list').innerHTML = data.map(i =>
+      `<tr><td>${i.id}</td><td>${i.name}</td><td>${(i.required_slots||[]).join(', ')||'-'}</td><td>${i.example_count}</td><td>${i.confirmation_required?'✅':'—'}</td></tr>`
+    ).join('');
+  } catch(e) { console.error(e); }
+}
+
+async function loadReviewQueue() {
+  try {
+    const res = await fetch(API + '/review-queue');
+    const data = await res.json();
+    if (!data.length) { document.getElementById('review-list').innerHTML = '<p>✅ No items in review queue.</p>'; return; }
+    document.getElementById('review-list').innerHTML = '<table><thead><tr><th>Utterance</th><th>Predicted</th><th>Confidence</th><th>Actions</th></tr></thead><tbody>' +
+      data.map(i => `<tr>
+        <td>${i.utterance}</td>
+        <td>${i.predictedIntent} <span class="badge badge-low">${(i.predictedConfidence*100).toFixed(0)}%</span></td>
+        <td>${new Date(i.timestamp).toLocaleDateString('vi-VN')}</td>
+        <td class="actions">
+          <input id="label-${i.id}" placeholder="Correct intent..." style="width:140px;padding:4px 8px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px">
+          <button class="btn btn-primary btn-sm" onclick="approveReview('${i.id}')">✅</button>
+          <button class="btn btn-danger btn-sm" onclick="rejectReview('${i.id}')">🗑</button>
+        </td>
+      </tr>`).join('') + '</tbody></table>';
+  } catch(e) { console.error(e); }
+}
+
+async function approveReview(id) {
+  const label = document.getElementById('label-' + id).value || '';
+  if (!label) return alert('Vui lòng nhập intent đúng.');
+  await fetch(API + '/review-queue/' + id + '/approve', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({label}) });
+  loadReviewQueue();
+}
+
+async function rejectReview(id) {
+  await fetch(API + '/review-queue/' + id + '/ignore', { method: 'POST' });
+  loadReviewQueue();
+}
+
+async function loadTrainingData() {
+  try {
+    const res = await fetch(API + '/training-data');
+    const data = await res.json();
+    const approved = data.filter(e => e.approved).length;
+    document.getElementById('training-stats').innerHTML =
+      `<div class="card"><h3>Total Examples</h3><div class="value">${data.length}</div></div>` +
+      `<div class="card"><h3>Approved</h3><div class="value">${approved}</div><div class="sub">${data.length ? (approved/data.length*100).toFixed(0) : 0}%</div></div>`;
+    document.getElementById('training-list').innerHTML = data.slice(-50).map(e =>
+      `<tr><td>${e.text}</td><td>${e.label}</td><td>${e.domain}</td><td><span class="badge ${e.approved?'badge-high':'badge-pending'}">${e.approved?'Approved':'Pending'}</span></td><td class="actions">${e.approved?'':`<button class="btn btn-primary btn-sm" onclick="approveExample('${e.id}')">Approve</button>`}</td></tr>`
+    ).join('');
+  } catch(e) { console.error(e); }
+}
+
+async function approveExample(id) {
+  await fetch(API + '/training-data/' + id + '/approve', { method: 'POST' });
+  loadTrainingData();
+}
+
+async function triggerRetraining() {
+  const res = await fetch(API + '/trigger-retraining', { method: 'POST' });
+  const data = await res.json();
+  alert(data.message || 'Retraining triggered');
+}
+
+async function loadModelMetrics() {
+  try {
+    const res = await fetch(API + '/model-metrics');
+    const data = await res.json();
+    if (!data.length) { document.getElementById('model-cards').innerHTML = '<div class="card"><h3>No metrics yet</h3></div>'; return; }
+    const last = data[data.length-1];
+    document.getElementById('model-cards').innerHTML =
+      `<div class="card"><h3>Latest Accuracy</h3><div class="value">${(last.accuracy*100).toFixed(1)}%</div></div>` +
+      `<div class="card"><h3>Latest F1</h3><div class="value">${(last.f1*100).toFixed(1)}%</div></div>` +
+      `<div class="card"><h3>Queries Processed</h3><div class="value">${last.queriesProcessed}</div></div>`;
+    document.getElementById('model-metrics').innerHTML = data.slice(-30).reverse().map(m =>
+      `<tr><td>${m.date}</td><td>${(m.accuracy*100).toFixed(1)}%</td><td>${(m.f1*100).toFixed(1)}%</td><td>${m.queriesProcessed}</td></tr>`
+    ).join('');
+  } catch(e) { console.error(e); }
+}
+
+loadAnalytics();
+</script>
+</body>
+</html>

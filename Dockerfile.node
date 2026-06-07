@@ -1,0 +1,17 @@
+FROM node:20-alpine AS build
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci --production=false
+COPY tsconfig.json tsconfig.build.json ./
+COPY src/ src/
+RUN npm run build
+
+FROM node:20-alpine AS runtime
+WORKDIR /app
+RUN addgroup -S app && adduser -S app -G app
+COPY --from=build /app/package.json /app/package-lock.json ./
+RUN npm ci --production && npm cache clean --force
+COPY --from=build /app/dist ./dist
+USER app
+EXPOSE 3000
+CMD ["node", "dist/index.js"]

@@ -1,0 +1,48 @@
+[project]
+name = "intent-translator-agent"
+version = "0.1.0"
+description = "ML sidecar — intent classification, NER, and ASR for Vietnamese institutional contexts"
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi>=0.112.0",
+  "uvicorn[standard]>=0.30.0",
+  "pydantic>=2.8.0",
+  "underthesea>=6.8.0",
+  "torch>=2.4.0",
+  "transformers>=4.43.0",
+  "setfit>=1.0.0",
+  "sentence-transformers>=3.0.0",
+  "chromadb>=0.5.0",
+  "whisper>=1.1.10",
+  "pyvi>=0.0.1",
+  "dateparser>=1.2.0",
+  "pdfminer.six>=20240706",
+  "trafilatura>=1.12.0",
+  "pyyaml>=6.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "ruff>=0.5.0",
+  "black>=24.0.0",
+  "mypy>=1.11.0",
+  "pytest>=8.3.0",
+  "pytest-asyncio>=0.23.0",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP", "B"]
+
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_return_any = true
+warn_unused_configs = true

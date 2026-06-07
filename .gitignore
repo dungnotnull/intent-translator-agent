@@ -1,0 +1,14 @@
+node_modules/
+dist/
+__pycache__/
+*.pyc
+.env
+.env.local
+*.log
+server.log
+src/ml/intent-classifier/models/
+src/ml/knowledge-system/schedules/
+.commandcode/
+.DS_Store
+Thumbs.db
+*.tsbuildinfo

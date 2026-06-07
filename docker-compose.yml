@@ -1,0 +1,94 @@
+version: "3.9"
+
+services:
+  # ── Node.js Orchestrator Agent ──
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.node
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - ML_INFERENCE_URL=http://ml-server:8001
+      - REDIS_URL=redis://redis:6379
+      - CHROMA_URL=http://chromadb:8000
+      - DEPLOYMENT_MODE=${DEPLOYMENT_MODE:-hybrid}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - OFFLINE_MODE=${OFFLINE_MODE:-false}
+    depends_on:
+      redis:
+        condition: service_healthy
+      ml-server:
+        condition: service_healthy
+      chromadb:
+        condition: service_healthy
+    volumes:
+      - ./src:/app/src:ro
+      - ./package.json:/app/package.json:ro
+    restart: unless-stopped
+
+  # ── Python ML Inference Server (FastAPI) ──
+  ml-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.ml
+    ports:
+      - "8001:8001"
+    environment:
+      - ML_MODEL_DIR=/app/src/ml/intent-classifier/models
+      - ML_DOMAIN=${ML_DOMAIN:-university}
+    volumes:
+      - ./src/ml/intent-classifier/models:/app/src/ml/intent-classifier/models
+      - ./src/routing:/app/src/routing:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # ── Redis (Session Store) ──
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+
+  # ── ChromaDB (Knowledge Base Vector Store) ──
+  chromadb:
+    image: chromadb/chroma:latest
+    ports:
+      - "8000:8000"
+    volumes:
+      - chroma-data:/chroma/chroma
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/heartbeat"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # ── Ollama (Offline LLM Fallback — optional) ──
+  # Uncomment for air-gapped / full-offline deployments
+  # ollama:
+  #   image: ollama/ollama:latest
+  #   ports:
+  #     - "11434:11434"
+  #   volumes:
+  #     - ollama-data:/root/.ollama
+  #   restart: unless-stopped
+  #   # Pull model after start: docker exec intent-translator-agent-ollama-1 ollama pull llama3.1:8b
+
+volumes:
+  redis-data:
+  chroma-data:
+  # ollama-data:

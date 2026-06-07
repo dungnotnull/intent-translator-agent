@@ -1,0 +1,64 @@
+slots:
+  citizen_id:
+    type: string
+    pattern: "^\\d{9,12}$"
+    prompt_vi: "số căn cước công dân / số định danh"
+    prompt_en: "citizen ID"
+    example: "079202001234"
+    privacy: true
+
+  procedure_name:
+    type: free_text
+    max_length: 200
+    prompt_vi: "tên thủ tục hành chính"
+    prompt_en: "procedure name"
+    examples:
+      - "cấp căn cước công dân"
+      - "đăng ký kết hôn"
+      - "cấp hộ chiếu"
+      - "đăng ký khai sinh"
+      - "cấp giấy phép xây dựng"
+
+  application_id:
+    type: string
+    pattern: "^[A-Z0-9]{8,20}$"
+    prompt_vi: "mã hồ sơ / số biên nhận"
+    prompt_en: "application ID"
+    example: "HS20240915001"
+
+  appointment_id:
+    type: string
+    pattern: "^[A-Z0-9]{8,20}$"
+    prompt_vi: "mã lịch hẹn"
+    prompt_en: "appointment ID"
+    example: "LH20240915001"
+
+  office_code:
+    type: string
+    pattern: "^[A-Z0-9]{4,10}$"
+    prompt_vi: "mã cơ quan / đơn vị"
+    prompt_en: "office code"
+    example: "UB001"
+
+  district:
+    type: string
+    prompt_vi: "quận / huyện"
+    prompt_en: "district"
+    examples:
+      - "Quận 1"
+      - "Huyện Bình Chánh"
+      - "Quận Hải Châu"
+
+  ward:
+    type: string
+    prompt_vi: "phường / xã"
+    prompt_en: "ward"
+    examples:
+      - "Phường Bến Nghé"
+      - "Xã Vĩnh Lộc"
+
+  preferred_date:
+    type: date
+    prompt_vi: "ngày hẹn mong muốn"
+    prompt_en: "preferred date"
+    example: "2024-09-20"
